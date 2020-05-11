@@ -1,42 +1,55 @@
-import { Link } from "gatsby"
-import PropTypes from "prop-types"
 import React from "react"
+import { Link } from "gatsby"
+import styled from "styled-components"
+import Logo from "./logo"
 
-const Header = ({ siteTitle }) => (
-  <header
-    style={{
-      background: `rebeccapurple`,
-      marginBottom: `1.45rem`,
-    }}
-  >
-    <div
-      style={{
-        margin: `0 auto`,
-        maxWidth: 960,
-        padding: `1.45rem 1.0875rem`,
-      }}
-    >
-      <h1 style={{ margin: 0 }}>
-        <Link
-          to="/"
-          style={{
-            color: `white`,
-            textDecoration: `none`,
-          }}
-        >
-          {siteTitle}
-        </Link>
-      </h1>
-    </div>
-  </header>
-)
+const StyledHeader = styled.header`
+  width: 100%;
+  display: flex;
+  margin: 0 auto;
+  padding: 0 20px;
+  max-width: 960px;
+  padding-top: 60px;
+  align-items: center;
+  padding-bottom: 40px;
+  justify-content: space-between;
+`
 
-Header.propTypes = {
-  siteTitle: PropTypes.string,
-}
+const StyledRootLink = styled(Link)`
+  color: #120045;
 
-Header.defaultProps = {
-  siteTitle: ``,
+  &:hover {
+    color: #1900b6;
+  }
+`
+
+const StyledNav = styled.nav`
+  a {
+    color: #92929f;
+    font-size: 20px;
+    font-weight: 500;
+    margin-left: 28px;
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: #020050;
+  }
+`
+
+function Header() {
+  return (
+    <StyledHeader>
+      <StyledRootLink to="/">
+        <Logo />
+      </StyledRootLink>
+      <StyledNav>
+        <Link to="/">Home</Link>
+        {/* <Link to="/blog">Blog</Link> */}
+        <Link to="mailto:hello@thomascullen.io">Contact</Link>
+      </StyledNav>
+    </StyledHeader>
+  )
 }
 
 export default Header

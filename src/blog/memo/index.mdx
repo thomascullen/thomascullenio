@@ -1,0 +1,243 @@
+---
+title: Everything you need to know about React.memo
+slug: "memo"
+date: "2020-04-29"
+---
+
+import Example01 from "./example-01"
+import Example02 from "./example-02"
+import Example03 from "./example-03"
+
+React.memo is a higher order component that react provides out of the box that can be
+used to increase the performance of your components. But what exactly does it do?
+By default React.memo takes a React function component and memoizes the result so that
+it will skip rendering and resuse the last render unless the props change. Let's look at
+an example.
+
+Let's look at the following code...
+
+```jsx
+import React from "react"
+
+function Hello() {
+  console.log("Hello rendered")
+  return <p>Hello 👋</p>
+}
+
+function App() {
+  console.log("App rendered")
+  const [count, setCount] = React.useState(1)
+
+  return (
+    <>
+      <h1>Count {count}</h1>
+      <Hello />
+      <button onClick={() => setCount(count + 1)}>Trigger App render</button>
+    </>
+  )
+}
+
+export default App
+```
+
+<Example01 />
+
+If you open the web console you will notice in the example above every time we render the App
+component, we also render the Test component. Now watch what happens when we wrap the Test
+component with React.memo...
+
+```jsx
+import React from "react"
+
+const Hello = React.memo(function Hello() {
+  console.log("Hello rendered")
+  return <p>Hello 👋</p>
+})
+
+function App() {
+  console.log("App rendered")
+  const [count, setCount] = React.useState(1)
+
+  return (
+    <>
+      <h1>Count {count}</h1>
+      <Hello />
+      <button onClick={() => setCount(count + 1)}>Trigger App render</button>
+    </>
+  )
+}
+
+export default App
+```
+
+<Example02 />
+
+Now every time we cause the App component to render, the Hello component does not render again.
+This is becuase React.memo has reused the last render of the Test component because we have not
+provided it any new props.
+
+## What if we need more control over when a component should re-render?
+
+React.memo allows us to customize the logic for determining when a component should
+re-render by passing it a second argument. By default react will do a shallow comparison of all
+of the component props. This is the equivilant of using the === operator against every previous
+value for each prop. Let's say we have an Avatar component which takes two props; a size which is
+a string and a user object which we will use to get the avatar URL.
+
+```jsx
+<Avatar size="lg" user={{ name: "Thomas", avatar: "https://..." }} />
+```
+
+Even if we wrap this component with React.memo, it will re render every time because of
+how javascript compares objects. e.g
+
+```js
+const userA = { name: "Thomas", avatar: "https://..." }
+const userB = { name: "Thomas", avatar: "https://..." }
+userA === userB // false
+userA === userA // true
+```
+
+In order to get React.memo to work we need to tell it how to compare new props to the
+previous props by passing a function as a second paramter.
+
+```jsx
+import React from "react"
+
+function userIsEqual(prev, next) {
+  if (prev.size !== next.size) return false
+  return prev.name === next.name && prev.avatar === next.avatar
+}
+
+const Avatar = React.memo(function Avatar({ user }) {
+  return <div>Avatar</div>
+}, userIsEqual)
+
+export default Avatar
+```
+
+I find that its generally best to avoid doing this as it is prone to introducing bugs if you forget
+to update your comparison function. Most of the time a better approach is to rely on the built in
+shallow comparison that React.memo provides and use memoized props and callback functions instead.
+
+## Memoized props and callback functions
+
+As we have already seen, in javascript objects are only equal to themselves. We face the same
+propblem when using arrays and functions.
+
+```js
+const optionsA = ["Yellow", "Red", "Blue"]
+const optionsB = ["Yellow", "Red", "Blue"]
+optionsA === optionsB // false
+```
+
+When we pass an array as a prop to a component wrapped with React.memo we have to think about
+wether or not we are passing the same instance of that array or a new one. Instead of using a
+custom comparison function, we can use memoized props to get React.memo working. Lets look at
+a common example.
+
+```jsx
+const Select = React.memo(function Select({ options, ...props }) {
+  return (
+    <select {...props}>
+      {options.map(option => (
+        <option key={option}>{option}</option>
+      ))}
+    </select>
+  )
+})
+
+function ColorSelect({ data }) {
+  const options = data.colors.map(c => c.name)
+  return <Select options={options} />
+}
+```
+
+Here we have a Select component wrapped in React.memo that takes an array of strings and renders
+them as options in a select dropdown. The ColorSelect component then takes a data prop (usually
+returned from an API) and converts that into an array of strings for the Select component. Even
+though we have wrapped Select with React.memo, it will have no effect as we are passing a new
+instance of 'options' everytime ColorSelect is rendered. We can fix this using the `useMemo`
+hook inside the ColorSelect component.
+
+```jsx
+const Select = React.memo(function Select({ options, ...props }) {
+  return (
+    <select {...props}>
+      {options.map(option => (
+        <option key={option}>{option}</option>
+      ))}
+    </select>
+  )
+})
+
+function ColorSelect({ data }) {
+  const options = React.useMemo(() => data.colors.map(c => c.name), [])
+  return <Select options={options} />
+}
+```
+
+Now everytime ColorSelect is rendered, it will use the same instance of options as before thanks
+to the useMemo hook. But what about functions? We are also going to want to pass an `onChange`
+prop to our Select component.
+
+```jsx
+const Select = React.memo(function Select({ options, ...props }) {
+  return (
+    <select {...props}>
+      {options.map(option => (
+        <option key={option}>{option}</option>
+      ))}
+    </select>
+  )
+})
+
+function ColorSelect({ data }) {
+  const options = React.useMemo(() => data.colors.map(c => c.name), [])
+
+  const handleChange = e => {
+    console.log("changed")
+  }
+
+  return <Select options={options} onChange={handleChange} />
+}
+```
+
+Now we have the same problem as before. Everytime the ColorSelect component renders, we are
+passing a new instance of handleChange to the Select component. Once again, React provides a
+hook we can use to fix this. We can use the `useCallback` hook to memoize the handleChange
+function.
+
+```jsx
+const Select = React.memo(function Select({ options, ...props }) {
+  return (
+    <select {...props}>
+      {options.map(option => (
+        <option key={option}>{option}</option>
+      ))}
+    </select>
+  )
+})
+
+function ColorSelect({ data }) {
+  const options = React.useMemo(() => data.colors.map(c => c.name), [])
+
+  const handleChange = React.useCallback(e => {
+    console.log("changed")
+  }, [])
+
+  return <Select options={options} onChange={handleChange} />
+}
+```
+
+The useMemo and useCallback hooks are powerful but can lead to bugs if you don't provide
+them the correct dependencies. It is worth reading through the React documentation for both
+of these hooks to fully understand them before relying on them. Sometimes you might need to
+pass a new instance every time and thats ok!
+
+## So when should we use React.memo?
+
+If you have a large component that always renders the same result when given the same props
+then you could benefit from wrapping it with React.memo. However, it is important to bare in mind
+that if you are passing complex props like objects, arrays and functions, you may need to memoize
+those props using the useMemo and useCallback hooks first.

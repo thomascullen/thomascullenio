@@ -1,0 +1,69 @@
+---
+draft: true
+title: Building a stack component with styled-components
+slug: "stack-component"
+date: "2020-05-01"
+---
+
+A lot of design system's out there have built in components for dealing with layouts. One of the most popular of these is the Stack component. In most cases a Stack component simply renders a tree of components adding consistent spacing between them.
+
+```jsx
+<Stack spacing="md">
+  <AnotherComponent />
+  <AnotherComponent />
+  <AnotherComponent />
+</Stack>
+```
+
+Although you can get by without them, I have found that Stack components are incredibly useful and something I find myself using all the time. They prevent me having to remember to add the correct padding or margins to each sub component which keeps the design consistent and the code clean.
+
+```jsx
+// Without a Stack component
+<>
+  <AnotherComponent marginBottom="md" />
+  <AnotherComponent marginBottom="md" />
+  <AnotherComponent />
+</>
+```
+
+We are going to use styled-components to build a simple Stack component. First we'll start by creating the styled components that we are going to need; One for the root component and another for each child in the stack.
+
+```jsx
+import styled from "styled-components"
+
+export const StyledStack = styled.div``
+export const StyledStackItem = styled.div``
+```
+
+It's always a good practice to Export your styled components incase you need to use them in styles for other components.
+
+```jsx
+import React from "react"
+
+function Stack({ spacing, children }) {
+  return (
+    <StyledStack>
+      {React.Children.map(children, c => {
+        if (c === null) return null
+        return (
+          <StyledStackItem spacing={spacing}>
+            {React.cloneElement(c)}
+          </StyledStackItem>
+        )
+      })}
+    </StyledStack>
+  )
+}
+```
+
+All we are doing here is iterating through the each child rendered inside of the Stack component and wrapping it in the `StyledStackItem` component passing in the spacing prop provided to the stack component. Note how we also check if the child is null. This allows us to do conditional rendering inside of the Stack component.
+
+```jsx
+<Stack spacing="lg">
+  <Item />
+  {someCondition && <Item />}
+  <Item />
+</Stack>
+```
+
+Finally we need to revisit our styled-components to actually space out the components.
