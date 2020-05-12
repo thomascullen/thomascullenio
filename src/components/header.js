@@ -45,7 +45,6 @@ function Header() {
       </StyledRootLink>
       <StyledNav>
         <Link to="/">Home</Link>
-        {/* <Link to="/blog">Blog</Link> */}
         <Link to="mailto:hello@thomascullen.io">Contact</Link>
       </StyledNav>
     </StyledHeader>

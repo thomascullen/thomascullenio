@@ -7,16 +7,8 @@ import Link from "../components/mdx/link"
 
 const Container = styled.div`
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 20px;
   max-width: 740px;
-`
-
-const Paragraph = styled.p`
-  color: #25232c;
-  font-size: 24px;
-  margin-top: 64px;
-  line-height: 34px;
-  margin-bottom: 64px;
 `
 
 const BlogLink = styled(GatsbyLink)`
@@ -72,7 +64,6 @@ const BlogPage = ({ data }) => (
   <Layout>
     <SEO title="Home" />
     <Container>
-      <Latest>Latest posts</Latest>
       {data.posts.nodes.map(post => (
         <div key={post.id}>
           <BlogLink to={post.frontmatter.slug}>
