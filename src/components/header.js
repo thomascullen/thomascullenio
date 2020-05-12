@@ -45,7 +45,7 @@ function Header() {
       </StyledRootLink>
       <StyledNav>
         <Link to="/">Home</Link>
-        <Link to="mailto:hello@thomascullen.io">Contact</Link>
+        <a href="mailto:hello@thomascullen.io">Contact</a>
       </StyledNav>
     </StyledHeader>
   )
