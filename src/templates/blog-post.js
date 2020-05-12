@@ -27,6 +27,11 @@ const StyledTitle = styled.h1`
   margin-bottom: 12px;
   line-height: 60px;
   letter-spacing: -0.1rem;
+
+  @media (max-width: 900px) {
+    font-size: 40px;
+    line-height: 44px;
+  }
 `
 
 const StyledDate = styled.div`

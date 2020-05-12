@@ -55,11 +55,11 @@ const IndexPage = () => (
             here
           </Link>
           , read my code{" "}
-          <Link target="_blank" href="https://dribbble.com/thomascullen">
+          <Link target="_blank" href="https://github.com/thomascullen">
             here
           </Link>{" "}
           and get snippets of my thoughts{" "}
-          <Link target="_blank" href="https://dribbble.com/thomascullen">
+          <Link target="_blank" href="https://twitter.com/thomasauros">
             here
           </Link>
           .
