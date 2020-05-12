@@ -11,8 +11,7 @@ import Example03 from "./example-03"
 React.memo is a higher order component that react provides out of the box that can be
 used to increase the performance of your components. But what exactly does it do?
 By default React.memo takes a React function component and memoizes the result so that
-it will skip rendering and resuse the last render unless the props change. Let's look at
-an example.
+it will skip rendering and resuse the last render unless the props change.
 
 Let's look at the following code...
 
@@ -42,7 +41,7 @@ export default App
 
 <Example01 />
 
-If you open the web console you will notice in the example above every time we render the App
+If you open the web console you will notice in the example above that every time we render the App
 component, we also render the Test component. Now watch what happens when we wrap the Test
 component with React.memo...
 
@@ -79,7 +78,7 @@ provided it any new props.
 ## What if we need more control over when a component should re-render?
 
 React.memo allows us to customize the logic for determining when a component should
-re-render by passing it a second argument. By default react will do a shallow comparison of all
+re-render by passing it a function as a second argument. By default react will do a shallow comparison of all
 of the component props. This is the equivilant of using the === operator against every previous
 value for each prop. Let's say we have an Avatar component which takes two props; a size which is
 a string and a user object which we will use to get the avatar URL.
