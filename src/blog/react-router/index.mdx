@@ -2,7 +2,12 @@
 title: Build a react-router clone from scratch
 slug: "react-router"
 date: "2020-05-13"
+draft: true
 ---
+
+import Example from "./example"
+
+<Example />
 
 React router is a package that I use in almost all of my projects. Not too long
 ago, Michael Jackson tweeted this: [https://twitter.com/mjackson/status/1223684745755684864](https://twitter.com/mjackson/status/1223684745755684864).
@@ -84,7 +89,9 @@ function Link({ to, children }) {
 }
 ```
 
-With all of these components we can go ahead and check that the Link components are working as expected. We will render out two Link components inside our Router and clicking them should update the browser URL
+With all of these components we can go ahead and check that the Link components
+are working as expected. We will render out two Link components inside our
+Router and clicking them should update the browser URL
 
 ```jsx
 function App() {
@@ -97,4 +104,6 @@ function App() {
 }
 ```
 
-Next up we are going to need a way to actually render some routes! Lets create a `Routes` component to wrap our routes. ( This is following the newer react-router API, think of it as the Switch component in the v5 API ).
+Next up we are going to need a way to actually render some routes! Lets create
+a `Routes` component to wrap our routes. ( This is following the newer
+react-router API, think of it as the Switch component in the v5 API ).

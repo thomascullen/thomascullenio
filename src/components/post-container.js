@@ -6,7 +6,7 @@ const StyledPostContainer = styled.div`
   color: #2e2b38;
   max-width: 800px;
   padding: 0 20px;
-  font-size: 22px;
+  font-size: 20px;
   line-height: 30px;
 
   *::selection {

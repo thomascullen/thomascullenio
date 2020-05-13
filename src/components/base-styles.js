@@ -6,8 +6,7 @@ export const BaseStyles = createGlobalStyle`
 
   * {
     box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: auto;
   }
  
   html, body {
