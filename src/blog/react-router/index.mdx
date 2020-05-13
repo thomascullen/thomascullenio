@@ -1,0 +1,100 @@
+---
+title: Build a react-router clone from scratch
+slug: "react-router"
+date: "2020-05-13"
+---
+
+React router is a package that I use in almost all of my projects. Not too long
+ago, Michael Jackson tweeted this: [https://twitter.com/mjackson/status/1223684745755684864](https://twitter.com/mjackson/status/1223684745755684864).
+This made me curious as to how difficult it would be to rebuild react router
+from scratch.
+
+Before we dig into this I want to clarify that if you need a router in your
+project you should just use react router. It will handle a lot more edge cases
+and is incredibly well tested.
+
+At the heart of react router is another package called 'history'. This package
+is responsible for managing the browser history. For this post we are only
+concerned about creating a router for the web and so we are going to bake this
+directly into our react components. The first thing we are going to need is a
+root `Router` component and a context for our other components to consume. Let's
+start with the context.
+
+Our router is going to be much more simplified than react router in that we
+aren't going to provide support for location state, hashes and other edge cases.
+Our router context is going to provide 2 keys to begin with `location` and
+`push:`
+
+- `location` is simply a string of the current path.
+- `push` is a function which can be called to change the current path.
+
+And with that we can create our basic router context.
+
+```jsx
+const RouterContext = React.createContext({
+  location: "",
+  push: () => {},
+})
+```
+
+This context is useless without rendering a provider. We are going to do that
+inside of our main `Router` component. The responsibility of this component is
+to provide information about the current route and provide ways to manipulate
+it. We are going to store the current location in react state. This way when we
+update the location our component will re-render. We also need to provide the
+`push` function to our context which will simply update the browser location and
+update our location state.
+
+```jsx
+function Router({ children }) {
+  const [location, setLocation] = React.useState(window.location.pathname)
+
+  const handlePush = newLocation => {
+    window.history.pushState({}, "", newLocation)
+    setLocation(newLocation)
+  }
+
+  return (
+    <RouterContext.Provider value={{ location, push: handlePush }}>
+      {children}
+    </RouterContext.Provider>
+  )
+}
+```
+
+In order to test our component we are going to need a way to update the current
+route to check the correct components are rendering. We will create a `Link`
+component for this. Our link component will take a `to` argument of the new path
+and call our `push` function from the router context when clicked.
+
+```jsx
+function Link({ to, children }) {
+  const { push } = React.useContext(RouterContext)
+
+  function handleClick(e) {
+    e.preventDefault()
+    push(to)
+  }
+
+  return (
+    <a href={to} onClick={handleClick}>
+      {children}
+    </a>
+  )
+}
+```
+
+With all of these components we can go ahead and check that the Link components are working as expected. We will render out two Link components inside our Router and clicking them should update the browser URL
+
+```jsx
+function App() {
+  return (
+    <Router>
+      <Link to="/one">One</Link>
+      <Link to="/two">Two</Link>
+    </Router>
+  )
+}
+```
+
+Next up we are going to need a way to actually render some routes! Lets create a `Routes` component to wrap our routes. ( This is following the newer react-router API, think of it as the Switch component in the v5 API ).
