@@ -2,7 +2,7 @@ import React from "react"
 
 function Hello() {
   console.log("Hello rendered")
-  return <p>Hello 👋</p>
+  return <p>Hello World</p>
 }
 
 function App() {

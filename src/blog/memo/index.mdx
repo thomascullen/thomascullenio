@@ -6,7 +6,6 @@ date: "2020-05-13"
 
 import Example01 from "./example-01"
 import Example02 from "./example-02"
-import Example03 from "./example-03"
 
 React.memo is a higher order component that react provides out of the box that can be
 used to increase the performance of your components. But what exactly does it do?
@@ -20,7 +19,7 @@ import React from "react"
 
 function Hello() {
   console.log("Hello rendered")
-  return <p>Hello 👋</p>
+  return <p>Hello World</p>
 }
 
 function App() {
@@ -50,7 +49,7 @@ import React from "react"
 
 const Hello = React.memo(function Hello() {
   console.log("Hello rendered")
-  return <p>Hello 👋</p>
+  return <p>Hello World</p>
 })
 
 function App() {

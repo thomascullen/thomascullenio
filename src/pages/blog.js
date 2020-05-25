@@ -3,7 +3,6 @@ import { graphql, Link as GatsbyLink } from "gatsby"
 import styled from "styled-components"
 import SEO from "../components/seo"
 import Layout from "../components/layout"
-import Link from "../components/mdx/link"
 
 const Container = styled.div`
   margin: 0 auto;
@@ -54,10 +53,6 @@ const BlogLink = styled(GatsbyLink)`
     opacity: 1;
     transform: scale(1);
   }
-`
-
-const Latest = styled.h2`
-  font-weight: 400;
 `
 
 const BlogPage = ({ data }) => (

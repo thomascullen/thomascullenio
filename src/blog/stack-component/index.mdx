@@ -1,11 +1,13 @@
 ---
-draft: true
 title: Building a stack component with styled-components
 slug: "stack-component"
-date: "2020-05-01"
+date: "2020-05-25"
 ---
 
-A lot of design system's out there have built in components for dealing with layouts. One of the most popular of these is the Stack component. In most cases a Stack component simply renders a tree of components adding consistent spacing between them.
+A lot of design system's out there have built in components for dealing with
+layouts. One of the most popular of these is the Stack component. In most cases
+a Stack component simply renders a collection of components in a vertical list
+adding consistent spacing between them.
 
 ```jsx
 <Stack spacing="md">
@@ -15,7 +17,10 @@ A lot of design system's out there have built in components for dealing with lay
 </Stack>
 ```
 
-Although you can get by without them, I have found that Stack components are incredibly useful and something I find myself using all the time. They prevent me having to remember to add the correct padding or margins to each sub component which keeps the design consistent and the code clean.
+Although you can get by without them, I have found that Stack components are
+incredibly useful and something I find myself using all the time. They prevent
+me having to remember to add the correct padding or margins to each sub
+component which keeps the design consistent and the code clean.
 
 ```jsx
 // Without a Stack component
@@ -26,28 +31,34 @@ Although you can get by without them, I have found that Stack components are inc
 </>
 ```
 
-We are going to use styled-components to build a simple Stack component. First we'll start by creating the styled components that we are going to need; One for the root component and another for each child in the stack.
+We are going to use styled-components to build a simple Stack component. First
+we'll start by creating the styled components that we are going to need; One for
+the root component and another for each child in the stack.
 
 ```jsx
+import React from "react"
 import styled from "styled-components"
 
 export const StyledStack = styled.div``
 export const StyledStackItem = styled.div``
 ```
 
-It's always a good practice to Export your styled components incase you need to use them in styles for other components.
+It's always a good practice to export your styled components incase you need to
+use them in styles for other components. Next let's build out the stack component
+itself.
 
 ```jsx
-import React from "react"
-
 function Stack({ spacing, children }) {
   return (
     <StyledStack>
-      {React.Children.map(children, c => {
-        if (c === null) return null
+      {React.Children.map(children, child => {
+        if (!React.isValidElement(child)) {
+          return
+        }
+
         return (
           <StyledStackItem spacing={spacing}>
-            {React.cloneElement(c)}
+            {React.cloneElement(child)}
           </StyledStackItem>
         )
       })}
@@ -56,14 +67,69 @@ function Stack({ spacing, children }) {
 }
 ```
 
-All we are doing here is iterating through the each child rendered inside of the Stack component and wrapping it in the `StyledStackItem` component passing in the spacing prop provided to the stack component. Note how we also check if the child is null. This allows us to do conditional rendering inside of the Stack component.
+All we are doing here is iterating through each child rendered inside of the
+Stack component and wrapping it in the StyledStackItem component passing in the
+spacing prop provided to the stack component. Note how we also check if the
+child is valid. This allows us to do conditional rendering inside of the Stack
+component.
 
 ```jsx
-<Stack spacing="lg">
+<Stack spacing="md">
   <Item />
   {someCondition && <Item />}
   <Item />
 </Stack>
 ```
 
-Finally we need to revisit our styled-components to actually space out the components.
+Finally we need to revisit our styled-components to actually space out the
+elements. For the sake of simplicity we are going to define our spacing scale
+beside our component, however, I encourage you to integrate this with a theme
+specification such as [styled-system](http://styled-system.com). In order to
+create the spacing between each element, all we need to do is apply padding to
+the top and bottom of each stack item that is half the size of the provided
+spacing. Let's update our StyledStackItem component to use the spacing prop.
+
+```jsx
+const SPACING = {
+  sm: 10,
+  md: 20,
+  lg: 30,
+}
+
+export const StyledStackItem = styled.div`
+  padding-top: ${props => SPACING[props.spacing] / 2}px;
+  padding-bottom: ${props => SPACING[props.spacing] / 2}px;
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+`
+```
+
+We have also removed any top padding from the first element, and any bottom
+padding from the last element to prevent any unwanted space around the Stack
+component. Finally let's ensure our component is used correctly by using
+prop-types to check that a correct spacing key is always passed for the spacing
+prop.
+
+```jsx
+import PropTypes from "props-types"
+
+// ...
+
+Stack.propTypes = {
+  spacing: PropTypes.oneOf(Object.keys(SPACING)),
+}
+```
+
+And there we have it! A simple Stack component we can use to keep our lists of
+elements simple and clean. You can of course take this further and extend it
+with additional functionality such as adding a 'divider' prop to render divider
+lines between each element in the stack. Another popular case is the ability to
+render the stack horizontally, however, I think it is best to create a new
+component for this as the requirements are often more complex for horizontal
+lists.

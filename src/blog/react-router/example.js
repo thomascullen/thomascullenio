@@ -36,27 +36,26 @@ function Link({ to, children }) {
   )
 }
 
+function Routes({ children }) {
+  const { location } = React.useContext(RouterContext)
+  const routes = createRoutesFromChildren(children)
+
+  const matches = React.useMemo(() => matchRoutes(routes, location), [
+    routes,
+    location,
+  ])
+
+  return <>routes</>
+}
+
 function createRoutesFromChildren(children) {
   const routes = []
 
   React.Children.forEach(children, child => {
-    // Ignore invalid elements, this allows us to conditionally render routes.
-    if (!React.isValidElement(child)) {
-      return
-    }
-
-    // If the element is a fragment, then pass through to its children
-    if (child.type === React.Fragment) {
-      routes.push.apply(route, createRoutesFromChildren(child.props.children))
-      return
-    }
-
-    const route = {
+    routes.push({
       element: child,
       path: child.props.path,
-    }
-
-    routes.push(route)
+    })
   })
 
   return routes
@@ -98,18 +97,6 @@ function compilePath(path) {
     ")"
   const matchers = new RegExp(source, "i")
   return [matchers, keys]
-}
-
-function Routes({ children }) {
-  const routes = createRoutesFromChildren(children)
-  const { location } = React.useContext(RouterContext)
-
-  const matches = React.useMemo(() => matchRoutes(routes, location), [
-    routes,
-    location,
-  ])
-
-  return <>routes</>
 }
 
 function Route() {
