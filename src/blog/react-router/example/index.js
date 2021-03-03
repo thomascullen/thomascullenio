@@ -64,7 +64,7 @@ function routesFromChildren(children) {
 
     const route = {
       path: child.props.path || "/",
-      component: child.props.children,
+      component: child,
     };
 
     if (child.props.children) {
@@ -101,7 +101,6 @@ function matchRoutes(routes, location) {
 
   routes.forEach((route) => {
     const { regex, keys } = compilePath(route.path);
-
     const match = location.match(regex);
 
     if (match) {
@@ -117,7 +116,7 @@ function matchRoutes(routes, location) {
     }
   });
 
-  return matches;
+  return matches[0];
 }
 
 const RouteContext = React.createContext({
@@ -129,43 +128,32 @@ const RouteContext = React.createContext({
 function Routes({ children }) {
   const routes = routesFromChildren(children);
   const { location } = useContext(RouterContext);
-  const matches = useMemo(() => matchRoutes(routes, location), [
+  const match = useMemo(() => matchRoutes(routes, location), [
     routes,
     location,
   ]);
 
   // if no routes matched then render null
-  if (!matches.length) return null;
+  if (!match) return null;
 
-  const element = matches.reduceRight((outlet, { params, pathname, route }) => {
-    return (
-      <RouteContext.Provider
-        value={{
-          route,
-          outlet,
-          params,
-          pathname,
-        }}
-      >
-        {route.component}
-      </RouteContext.Provider>
-    );
-  }, null);
-
-  return element;
+  return (
+    <RouteContext.Provider
+      value={{
+        params: match.params,
+        pathname: match.pathname,
+      }}
+    >
+      {match.route.component}
+    </RouteContext.Provider>
+  );
 }
 
 function useParams() {
   return useContext(RouteContext).params;
 }
 
-function Outlet() {
-  const route = useContext(RouteContext);
-  return route.outlet;
-}
-
-function Route() {
-  return <Outlet />;
+function Route({ children }) {
+  return children;
 }
 
 function Post() {

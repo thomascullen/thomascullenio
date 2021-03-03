@@ -1,12 +1,12 @@
-import React from "react"
-import styled from "styled-components"
-import { graphql } from "gatsby"
-import { MDXProvider } from "@mdx-js/react"
-import { MDXRenderer } from "gatsby-plugin-mdx"
-import SEO from "../components/seo"
-import Layout from "../components/layout"
-import mdx from "../components/mdx"
-import Container from "../components/post-container"
+import React from "react";
+import styled from "styled-components";
+import { graphql } from "gatsby";
+import { MDXProvider } from "@mdx-js/react";
+import { MDXRenderer } from "gatsby-plugin-mdx";
+import SEO from "../components/seo";
+import Layout from "../components/layout";
+import mdx from "../components/mdx";
+import Container from "../components/post-container";
 
 const TitleContainer = styled.div`
   width: 100%;
@@ -18,33 +18,33 @@ const TitleContainer = styled.div`
   line-height: 30px;
   text-align: center;
   margin-bottom: 32px;
-`
+`;
 
 const StyledTitle = styled.h1`
   color: #120045;
   font-size: 62px;
-  font-weight: 600;
+  font-weight: 800;
   margin-bottom: 12px;
   line-height: 60px;
-  letter-spacing: -0.1rem;
+  letter-spacing: -0.14rem;
 
   @media (max-width: 900px) {
     font-size: 40px;
     line-height: 44px;
   }
-`
+`;
 
 const StyledDate = styled.div`
   color: #847d98;
   font-size: 20px;
   letter-spacing: -0.02rem;
-`
+`;
 
 const StyledArticle = styled.article`
   width: 100%;
   display: flex;
   flex-direction: column;
-`
+`;
 
 export default ({ data }) => {
   return (
@@ -66,8 +66,8 @@ export default ({ data }) => {
         </Container>
       </StyledArticle>
     </Layout>
-  )
-}
+  );
+};
 
 export const query = graphql`
   query($id: String!) {
@@ -83,4 +83,4 @@ export const query = graphql`
       excerpt(pruneLength: 250)
     }
   }
-`
+`;

@@ -1,7 +1,7 @@
-import React from "react"
-import styled from "styled-components"
-import theme from "prism-react-renderer/themes/dracula"
-import Highlight, { defaultProps } from "prism-react-renderer"
+import React from "react";
+import styled from "styled-components";
+import theme from "./theme";
+import Highlight, { defaultProps } from "prism-react-renderer";
 
 const StyledPre = styled.pre`
   min-width: 120%;
@@ -13,17 +13,19 @@ const StyledPre = styled.pre`
   line-height: 1.5rem;
   margin-top: 2rem;
   margin-bottom: 3rem;
+  letter-spacing: -0.01rem;
   box-shadow: 0px 16px 40px rgba(23, 0, 90, 0.2);
+  font-family: "Fira Code", monospace;
 
   @media (max-width: 900px) {
     min-width: 100%;
     margin-left: 0px;
   }
-`
+`;
 
 function Code({ children }) {
-  const matches = children.props.className.match(/language-(?<lang>.*)/)
-  const language = matches?.groups?.lang
+  const matches = children.props.className.match(/language-(?<lang>.*)/);
+  const language = matches?.groups?.lang;
 
   return (
     <Highlight
@@ -35,16 +37,16 @@ function Code({ children }) {
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <StyledPre className={className} style={style}>
           {tokens.map((line, i) => (
-            <div {...getLineProps({ line, key: i })}>
+            <div key={i} {...getLineProps({ line })}>
               {line.map((token, key) => (
-                <span {...getTokenProps({ token, key })} />
+                <span key={key} {...getTokenProps({ token })} />
               ))}
             </div>
           ))}
         </StyledPre>
       )}
     </Highlight>
-  )
+  );
 }
 
-export default Code
+export default Code;

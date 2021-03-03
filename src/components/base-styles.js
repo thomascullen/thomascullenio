@@ -1,5 +1,5 @@
-import { normalize } from "styled-normalize"
-import { createGlobalStyle } from "styled-components"
+import { normalize } from "styled-normalize";
+import { createGlobalStyle } from "styled-components";
 
 export const BaseStyles = createGlobalStyle`
   ${normalize}
@@ -12,6 +12,7 @@ export const BaseStyles = createGlobalStyle`
   html, body {
     font-family: 'Inter', sans-serif;
   }
-`
 
-export default BaseStyles
+`;
+
+export default BaseStyles;
