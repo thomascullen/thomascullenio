@@ -67,13 +67,6 @@ function routesFromChildren(children) {
       component: child,
     };
 
-    if (child.props.children) {
-      const childRoutes = routesFromChildren(child.props.children);
-      if (childRoutes.length) {
-        route.children = childRoutes;
-      }
-    }
-
     routes.push(route);
   });
 
@@ -96,18 +89,17 @@ function compilePath(path) {
   return { regex, keys };
 }
 
-function matchRoutes(routes, location) {
+function matchRoutes(children, location) {
   const matches = [];
 
-  routes.forEach((route) => {
-    const { regex, keys } = compilePath(route.path);
+  React.Children.forEach(children, (route) => {
+    const { regex, keys } = compilePath(route.props.path);
     const match = location.match(regex);
 
     if (match) {
       const params = match.slice(2);
       matches.push({
-        route,
-        pathname: match[0],
+        route: route.props.children,
         params: keys.reduce((collection, param, index) => {
           collection[param] = params[index];
           return collection;
@@ -121,15 +113,12 @@ function matchRoutes(routes, location) {
 
 const RouteContext = React.createContext({
   params: {},
-  pathname: "",
-  outlet: null,
 });
 
 function Routes({ children }) {
-  const routes = routesFromChildren(children);
   const { location } = useContext(RouterContext);
-  const match = useMemo(() => matchRoutes(routes, location), [
-    routes,
+  const match = useMemo(() => matchRoutes(children, location), [
+    children,
     location,
   ]);
 
@@ -137,13 +126,8 @@ function Routes({ children }) {
   if (!match) return null;
 
   return (
-    <RouteContext.Provider
-      value={{
-        params: match.params,
-        pathname: match.pathname,
-      }}
-    >
-      {match.route.component}
+    <RouteContext.Provider value={{ params: match.params }}>
+      {match.route}
     </RouteContext.Provider>
   );
 }
@@ -156,22 +140,41 @@ function Route({ children }) {
   return children;
 }
 
-function Post() {
+function Products() {
+  return (
+    <>
+      <h4>Example Products</h4>
+      <ul>
+        <li>
+          <Link to="/products/1">Product One</Link>
+        </li>
+        <li>
+          <Link to="/products/2">Product Two</Link>
+        </li>
+      </ul>
+    </>
+  );
+}
+
+function Product() {
   const { id } = useParams();
-  return <div>Post with id {id}</div>;
+  return (
+    <>
+      <h4>Viewing product {id}</h4>
+      <Link to="/">Back to all products</Link>
+    </>
+  );
 }
 
 export default function App() {
   return (
     <Router>
-      <Link to="/posts/1234">Post With ID</Link>
-      <Link to="/two">Two</Link>
       <Routes>
-        <Route path="/posts/:id">
-          <Post />
+        <Route path="/products/:id">
+          <Product />
         </Route>
-        <Route path="/two">
-          <div>You are on path two</div>
+        <Route path="/">
+          <Products />
         </Route>
       </Routes>
     </Router>

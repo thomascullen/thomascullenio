@@ -4,8 +4,8 @@ import theme from "./theme";
 import Highlight, { defaultProps } from "prism-react-renderer";
 
 const StyledPre = styled.pre`
-  min-width: 120%;
-  margin-left: -10%;
+  min-width: 108%;
+  margin-left: -4%;
   font-size: 1rem;
   overflow-x: scroll;
   padding: 24px;
@@ -14,7 +14,7 @@ const StyledPre = styled.pre`
   margin-top: 2rem;
   margin-bottom: 3rem;
   letter-spacing: -0.01rem;
-  box-shadow: 0px 16px 40px rgba(23, 0, 90, 0.2);
+  box-shadow: 0px 4px 40px rgba(23, 0, 90, 0.2);
   font-family: "Fira Code", monospace;
 
   @media (max-width: 900px) {
