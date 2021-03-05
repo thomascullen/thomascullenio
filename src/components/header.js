@@ -1,7 +1,7 @@
-import React from "react"
-import { Link } from "gatsby"
-import styled from "styled-components"
-import Logo from "./logo"
+import React from "react";
+import { Link } from "gatsby";
+import styled from "styled-components";
+import Logo from "./logo";
 
 const StyledHeader = styled.header`
   width: 100%;
@@ -13,7 +13,7 @@ const StyledHeader = styled.header`
   align-items: center;
   padding-bottom: 40px;
   justify-content: space-between;
-`
+`;
 
 const StyledRootLink = styled(Link)`
   color: #120045;
@@ -21,13 +21,13 @@ const StyledRootLink = styled(Link)`
   &:hover {
     color: #1900b6;
   }
-`
+`;
 
 const StyledNav = styled.nav`
   a {
     color: #92929f;
-    font-size: 20px;
-    font-weight: 500;
+    font-size: 18px;
+    font-weight: 400;
     margin-left: 28px;
     text-decoration: none;
   }
@@ -35,7 +35,7 @@ const StyledNav = styled.nav`
   a:hover {
     color: #020050;
   }
-`
+`;
 
 function Header() {
   return (
@@ -49,7 +49,7 @@ function Header() {
         <a href="mailto:hello@thomascullen.io">Contact</a>
       </StyledNav>
     </StyledHeader>
-  )
+  );
 }
 
-export default Header
+export default Header;

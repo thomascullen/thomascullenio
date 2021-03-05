@@ -12,6 +12,13 @@ module.exports = {
       },
     },
     {
+      resolve: "gatsby-plugin-mailchimp",
+      options: {
+        endpoint:
+          "https://thomascullen.us1.list-manage.com/subscribe/post?u=cbe9df46a7cdf6d54b22507d0&amp;id=8f4ac57c26",
+      },
+    },
+    {
       resolve: `gatsby-plugin-mdx`,
       options: {
         gatsbyRemarkPlugins: [
@@ -38,4 +45,4 @@ module.exports = {
     },
     `gatsby-transformer-sharp`,
   ],
-}
+};

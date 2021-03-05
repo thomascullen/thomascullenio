@@ -7,12 +7,13 @@ import SEO from "../components/seo";
 import Layout from "../components/layout";
 import mdx from "../components/mdx";
 import Container from "../components/post-container";
+import Subscribe from "../components/Subscribe";
 
 const TitleContainer = styled.div`
   width: 100%;
   margin: 0 auto;
   color: #2e2b38;
-  max-width: 1000px;
+  max-width: 900px;
   padding: 0 20px;
   font-size: 20px;
   line-height: 30px;
@@ -23,10 +24,11 @@ const TitleContainer = styled.div`
 const StyledTitle = styled.h1`
   color: #120045;
   font-size: 62px;
-  font-weight: 800;
+  font-weight: 500;
   margin-bottom: 12px;
-  line-height: 60px;
-  letter-spacing: -0.14rem;
+  line-height: 1em;
+  letter-spacing: -0.12rem;
+  font-family: "Literata", serif;
 
   @media (max-width: 900px) {
     font-size: 40px;
@@ -46,7 +48,7 @@ const StyledArticle = styled.article`
   flex-direction: column;
 `;
 
-export default ({ data }) => {
+export default function BlogPost({ data }) {
   return (
     <Layout>
       <SEO
@@ -63,11 +65,12 @@ export default ({ data }) => {
           <MDXProvider components={mdx}>
             <MDXRenderer>{data.mdx.body}</MDXRenderer>
           </MDXProvider>
+          <Subscribe />
         </Container>
       </StyledArticle>
     </Layout>
   );
-};
+}
 
 export const query = graphql`
   query($id: String!) {
