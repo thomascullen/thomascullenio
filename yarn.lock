@@ -3827,14 +3827,6 @@ convert-source-map@^1.7.0:
   dependencies:
     safe-buffer "~5.1.1"
 
-convertkit-react@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/convertkit-react/-/convertkit-react-1.5.0.tgz#d4840a0d86445cc41650bb3880d71d8aa3af6589"
-  integrity sha512-i3/0/J671QZAsSKHr/BHKESkvuSd/jOK/TfgPOPoF5BFipVS82SKhnw+xmdfunUUWPpMrkaN0F4f5VnBy0FfNg==
-  dependencies:
-    prop-types "^15.7.2"
-    react "^17.0.1"
-
 cookie-signature@1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/cookie-signature/-/cookie-signature-1.0.6.tgz#e303a882b342cc3ee8ca513a79999734dab3ae2c"
@@ -11842,14 +11834,6 @@ react@^16.12.0, react@^16.8.0:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.2"
-
-react@^17.0.1:
-  version "17.0.1"
-  resolved "https://registry.yarnpkg.com/react/-/react-17.0.1.tgz#6e0600416bd57574e3f86d92edba3d9008726127"
-  integrity sha512-lG9c9UuMHdcAexXtigOZLX8exLWkW0Ku29qPRU8uhF2R9BN96dLCt0psvzPLlHc5OWkgymP3qwTRgbnw5BKx3w==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
 
 read-chunk@^3.2.0:
   version "3.2.0"

@@ -1,5 +1,5 @@
-import React from "react"
-import styled, { css } from "styled-components"
+import React from "react";
+import styled, { css } from "styled-components";
 
 const StyledLink_Text = css`
   &::after {
@@ -22,22 +22,22 @@ const StyledLink_Text = css`
   &:hover::after {
     opacity: 1;
   }
-`
+`;
 
 const StyledLink = styled.a`
   color: #2300f6;
   position: relative;
   text-decoration: none;
-  ${p => p.isTextLink && StyledLink_Text};
-`
+  ${(p) => p.isTextLink && StyledLink_Text};
+`;
 
 function Link({ children, ...props }) {
-  const isTextLink = typeof children === "string"
+  const isTextLink = typeof children === "string";
   return (
-    <StyledLink {...props} isTextLink={isTextLink}>
+    <StyledLink {...props} target="_blank" isTextLink={isTextLink}>
       {children}
     </StyledLink>
-  )
+  );
 }
 
-export default Link
+export default Link;

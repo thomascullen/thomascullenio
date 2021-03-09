@@ -11,8 +11,9 @@ made me curious as to how difficult it would be to rebuild react router from
 scratch.
 
 Before we dig into this I want to clarify that if you need a router in your
-project you should just use react router. It will handle a lot more edge cases
-and is incredibly well tested. This is purely a learning exercise.
+project you should just use react router. It has a lot more features, handles a
+lot more edge cases and is incredibly well tested. This is purely a learning
+exercise.
 
 In this post we are going to build a simplified version of react-router that is
 based on the
@@ -26,9 +27,9 @@ root `Router` component and a context for our other components to consume. Let's
 start with the context.
 
 Our router is going to be much more simplified than react router in that we
-aren't going to provide support for location state, hashes and other edge cases
-that react router provides. Our router context is going to provide 2 keys;
-location and push:
+aren't going to provide support for location state, hashes and other cases that
+react router provides. Our router context is going to provide 2 keys; location
+and push:
 
 - location is simply a string of the current path.
 - push is a function which can be called to change the current path.
@@ -49,7 +50,8 @@ it. We are going to store the current location path in react state. This way
 when we update the location our component will re-render. We also need to
 provide the `push` function to our context which will simply update the browser
 location and update our location state. Finally we also listen for the window
-'popstate' event to update our location when using the browser back button.
+'popstate' event to update our location when using the browser navigation
+buttons.
 
 ```jsx
 function Router({ children }) {
