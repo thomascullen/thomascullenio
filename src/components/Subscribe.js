@@ -96,8 +96,8 @@ export default function Subscribe() {
     <>
       <StyledTitle>Subscribed!</StyledTitle>
       <StyledSubTitle>
-        Thanks for signing up. I dont post often, but when I do i&apos;ll let
-        you know.
+        Thanks for signing up. I don&apos;t post often, but when I do i&apos;ll
+        let you know.
       </StyledSubTitle>
     </>
   ) : (
