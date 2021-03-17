@@ -57,27 +57,26 @@ buttons.
 function Router({ children }) {
   const [location, setLocation] = React.useState(window.location.pathname);
 
-  const handlePush = useCallback(
-    (newLocation) => {
-      window.history.pushState({}, "", newLocation);
-      setLocation(newLocation);
-    },
-    [setLocation]
-  );
+  const handlePush = useCallback((newLocation) => {
+    window.history.pushState({}, "", newLocation);
+    setLocation(newLocation);
+  }, []);
 
   const handleHashChange = useCallback(() => {
     setLocation(window.location.pathname);
-  }, [setLocation]);
+  }, []);
 
   useEffect(() => {
     window.addEventListener("popstate", handleHashChange);
     return () => window.removeEventListener("popstate", handleHashChange);
   }, [handleHashChange]);
 
+  const value = useMemo(() => {
+    return { location, push: handlePush };
+  }, [location, handlePush]);
+
   return (
-    <RouterContext.Provider value={{ location, push: handlePush }}>
-      {children}
-    </RouterContext.Provider>
+    <RouterContext.Provider value={value}>{children}</RouterContext.Provider>
   );
 }
 ```
@@ -160,6 +159,7 @@ function matchRoutes(children, location) {
     const match = location.match(regex);
 
     if (match) {
+      const params = match.slice(2);
       matches.push({
         route: route.props.children,
         params: keys.reduce((collection, param, index) => {
@@ -190,19 +190,21 @@ function Routes({ children }) {
     location,
   ]);
 
+  const value = useMemo(() => {
+    return { params: match.params };
+  }, [match]);
+
   // if no routes matched then render null
   if (!match) return null;
 
   return (
-    <RouteContext.Provider value={{ params: match.params }}>
-      {match.route}
-    </RouteContext.Provider>
+    <RouteContext.Provider value={value}>{match.route}</RouteContext.Provider>
   );
 }
 ```
 
 At this point we actually have a functioning router, however, we are missing a
-small but crucial piece. Every good router needs a way to extract paramaters
+small but crucial piece. Every good router needs a way to extract parameters
 from the URL. Thanks to our `RouteContext` we can easily create a `useParams`
 hook that our routes can use to extract this.
 
