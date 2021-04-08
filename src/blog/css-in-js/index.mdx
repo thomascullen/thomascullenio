@@ -1,0 +1,190 @@
+---
+title: Building a CSS-in-JS library from scratch
+slug: "css-in-js"
+date: "2021-04-08"
+---
+
+CSS-in-JS libraries are popping up all over the place at the moment. They are a
+really powerful way to style apps but how do they actually work?. In this post
+we are going to build our own CSS-in-JS library.
+
+Before we dig in it is worth saying that if you are looking for a CSS-in-JS
+solution, you should probably use one of the existing libraries out there rather
+then building your own as they are well tested with more functionality. Let's
+dive in.
+
+We are going to create a simple css-in-js library that follows the 'styled' API
+made popular by styled-components. We will only focus on basic functionality so
+we won't be looking at things like server side rendering or browser prefixing.
+Most CSS-in-JS libraries work by taking style definitions, generating class
+names for them and injecting them inside of a style tag in the document head. So
+let's start by creating this style tag.
+
+```js
+const style = document.createElement("style");
+document.head.appendChild(style);
+```
+
+We can now attach any CSS rules we want to this style tag using the
+CSSStyleSheet `insertRule` method. We can also make use of the `cssRules` method
+to ensure we are always adding the rule to the end of the list by providing the
+list length as the index we want to insert the rule at.
+
+```js
+style.sheet.insertRule(".red { color: red; }", style.sheet.cssRules.length);
+```
+
+You can read more about the CSSStyleSheet interface
+[here](https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet).
+
+Next thing we need is a function that will take a CSS rule, generate a
+className, insert a new rule into our style tag and return the generated class
+name for us to use in our components. For our use case, we can simply using the
+index to create a unique class name, instead of doing any kind of hashing like
+most libraries do.
+
+```js
+function css(styles) {
+  const index = style.sheet.cssRules.length;
+  const className = `css-${index}`;
+  const rule = `.${className} { ${styles} }`;
+  style.sheet.insertRule(rule, index);
+  return className;
+}
+```
+
+Now we can use our `css` function to generate class names that we can provide to
+our components.
+
+```jsx
+function Example() {
+  const className = css("color: red;");
+  return <div className={className}>This is an example</div>;
+}
+```
+
+That's great and all but it's far from the API that we want to have. We want to
+be able to define components using the popular "styled" API like this.
+
+```js
+const Example = styled("div")`
+  color: red;
+`;
+```
+
+In order to achieve this we need to take a quick detour to explore tagged
+template literals. First we need to know what a template literal is. A template
+literal is a type of string that allows you to interpolate values inside of
+them. e.g
+
+```js
+const color = "red";
+const rule = `color: ${color};`;
+```
+
+A tagged template literal is a special way of parsing a template literal with a
+function. This function will be called with an array of all of the string parts
+as well as any variables provided.
+
+```js
+function greet(strings, ...args) {
+  console.log("strings: ", strings);
+  console.log("args: ", args);
+}
+
+const name = "Thomas";
+greet`My name is ${name}!`;
+// strings: ["My name is", "!"]
+// args: ["Thomas"]
+```
+
+Now that we know a template literal can be tagged with a function, we can
+revisit out css-in-js implementation to achieve the API we want. We need to
+create a `styled` function that takes the type of dom element we want to render
+and returns a function that we can then use as a tagged template literal to
+create our react component. Let's keep things simple to start with and just take
+the styles that we pass in as is so that we can focus on getting the API we
+want.
+
+```js
+function styled(tag) {
+  return function styledTemplate(rules) {
+    return function Component(props) {
+      // remember that tagged template literals give us the string parts as an
+      // array so for now we just pass the first element of the array which will
+      // be the entire CSS rule because we aren't passing any variables.
+      const className = css(rules[0]);
+      return React.createElement(tag, { className, ...props });
+    };
+  };
+}
+```
+
+😦 I know, that's a lot of functions returning functions. Let's walk through it.
+The `styled` function returns the `styledTemplate` function. The
+`styledTemplate` function is similar to our `greet` function from earlier. We
+call it as a tagged template literal. This then returns the react component
+which we can render. So with all of this in place we can do do the following.
+
+```jsx
+const Header = styled("h1")`
+  font-size: 24px;
+  font-weight: 600;
+`
+
+<Header>This is a header</Header>
+```
+
+So this is finaly starting to look like the styled-components API we wanted. But
+what about things like adapting styles based on component props? Let's say we
+wanted our Header component to change color based on a `color` prop as well as
+allowing the background-color to be customized with a `bg` prop. For that we
+need to revisit how we are treating the tagged template literal. Remember how
+our `greet` function was given a second array of all of the variables passed
+into the template literal? Well we can also pass functions into the template
+literal, which we can then call will out component props at render time. 🤯
+Let's create a new function that will process the string literal and any
+functions we provide it into a single CSS rule.
+
+```jsx
+function resolveRule(parts, args, props) {
+  return parts.reduce((output, part, index) => {
+    if (index === rules.length - 1) {
+      return output + part;
+    }
+    return output + part + args[index](props);
+  });
+}
+```
+
+With this function we only have one thing left to do which is to update our
+`styled` function to make use of it.
+
+```js
+function styled(tag) {
+  return function styledTemplate(rules, ...args) {
+    return function Component(props) {
+      const resolved = resolveRule(rules, args, props);
+      const className = css(resolved);
+      return React.createElement(tag, { className, ...props });
+    };
+  };
+}
+```
+
+And there we have it! Our very own CSS-in-JS library.
+
+```jsx
+const Header = styled("h1")`
+  font-size: 24px;
+  font-weight: 600;
+  color: ${(props) => props.color || "black"};
+  background-color: ${(props) => props.bg || "transparent"};
+`;
+```
+
+#### Further Reading
+
+https://medium.com/@tkh44/writing-a-css-in-js-library-from-scratch-96cd23a017b4
+https://mxstbr.blog/2016/11/styled-components-magic-explained/
+https://wesbos.com/tagged-template-literals
